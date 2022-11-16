@@ -1,18 +1,46 @@
 #! /usr/bin/env node
-const args = process.argv.slice(2);
-if (args.length < 2) {
-  console.error("Please enter at least 2 numbers");
-  process.exit(1); //an error occurred
+const { program } = require("commander");
+const process = require("process");
+const path = require("path");
+const fs = require("fs");
+
+const cwd = process.cwd();
+const packageJson = require(`${cwd}/package.json`);
+
+program
+  .requiredOption("--target-esm <path>", "ESM distribution folder")
+  .requiredOption("--target-cjs <path>", "CJS distribution folder");
+
+program.parse();
+
+const options = program.opts();
+
+if (!options.targetEsm || !options.targetCjs) {
+  program.help();
 }
 
-const total = args.reduce(
-  (previous, current) => parseFloat(current) * parseFloat(previous)
-);
-
-if (isNaN(total)) {
-  console.error("One or more arguments are not numbers");
-  process.exit(1); //an error occurred
+if (!fs.existsSync(options.targetEsm)) {
+  program.error(`ESM distribution folder ${options.targetEsm} does not exist`);
 }
 
-console.log(total);
-process.exit(0); //no errors occurred
+if (!fs.existsSync(options.targetCjs)) {
+  program.error(`CJS distribution folder ${options.targetCjs} does not exist`);
+}
+
+const esmPackageJson = {
+  ...packageJson,
+  type: "module",
+};
+
+const cjsPackageJson = {
+  ...packageJson,
+  type: "commonjs",
+};
+
+const esmPackageJsonPath = path.join(cwd, options.targetEsm, "package.json");
+const cjsPackageJsonPath = path.join(cwd, options.targetCjs, "package.json");
+
+fs.writeFileSync(esmPackageJsonPath, JSON.stringify(esmPackageJson));
+fs.writeFileSync(cjsPackageJsonPath, JSON.stringify(cjsPackageJson));
+
+process.exit(0);
