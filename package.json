@@ -1,0 +1,19 @@
+{
+    "name": "hybrid-package-json",
+    "version": "0.0.1",
+    "description": "A tool that creates ESM and CJS package.json files for hybrid npm packages ",
+    "scripts": {},
+    "bin": {
+        "multiply": "bin/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/proohit/hybrid-package-json.git"
+    },
+    "author": "proohit",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/proohit/hybrid-package-json/issues"
+    },
+    "homepage": "https://github.com/proohit/hybrid-package-json#readme"
+}
